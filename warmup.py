@@ -57,18 +57,18 @@ love_2_vector = get_word_vector(love_2_index, tokenized_similar_sentence_2, robe
 print('love similarity')
 print(cosine_similarity(love_1_vector.detach().numpy().reshape(1, -1), love_2_vector.detach().numpy().reshape(1, -1)))
 ###############3###############
-different_sentence_1 = 'She decided to clip her hair back with a colorful barrette.'
-different_sentence_2 = 'Some have come out of nowhere, others have taken months to catch on, and all of them could become ubiquitous in the blink of a TikTok clip.'
+different_sentence_1 = 'The fission of the cell could be inhibited with certain chemicals.'
+different_sentence_2 = 'His cell phone worked, so he spoke with his parents and sister-in-law.'
 tokenized_different_sentence_1 = tokenizer(different_sentence_1, return_tensors='pt')
 tokenized_different_sentence_2 = tokenizer(different_sentence_2, return_tensors='pt')
 
-bass_1_index = tokenized_different_sentence_1["input_ids"][0].tolist().index(tokenizer.encode(" clip")[1])
-bass_2_index = tokenized_different_sentence_2["input_ids"][0].tolist().index(tokenizer.encode(" clip")[1])
-bass_1_vector = get_word_vector(bass_1_index, tokenized_different_sentence_1, roberta_model)
-bass_2_vector = get_word_vector(bass_2_index, tokenized_different_sentence_2, roberta_model)
+cell_1_index = tokenized_different_sentence_1["input_ids"][0].tolist().index(tokenizer.encode(" cell")[1])
+cell_2_index = tokenized_different_sentence_2["input_ids"][0].tolist().index(tokenizer.encode(" cell")[1])
+cell_1_vector = get_word_vector(cell_1_index, tokenized_different_sentence_1, roberta_model)
+cell_2_vector = get_word_vector(cell_2_index, tokenized_different_sentence_2, roberta_model)
 
-print('bass similarity')
-print(cosine_similarity(bass_1_vector.detach().numpy().reshape(1, -1), bass_2_vector.detach().numpy().reshape(1, -1)))
+print('cell similarity')
+print(cosine_similarity(cell_1_vector.detach().numpy().reshape(1, -1), cell_2_vector.detach().numpy().reshape(1, -1)))
 
 ###############4###############
 sentence_4 = "Didn't I tell you it's gonna be a rock 'n' roll weekend with lots o' fun, and we'll gather 'round the campfire, singin' our favorite songs 'til the break o' dawn?"
