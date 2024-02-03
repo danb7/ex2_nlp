@@ -1,10 +1,7 @@
 from collections import Counter
 import random
-#Returns 2 values: Article dicts: containing the Topic and the article text
+
 def get_file_data(file_name, lower = False):
-    #Each topic is separated by header line, empty line before the text and another empty line
-    #So we will skip the first two lines, get the thrid line and skip the fourth one 
-    print("Reading file")
     with open(file_name, 'r') as file:   
         file_data = file.read().splitlines()
     
@@ -82,7 +79,6 @@ def calc_Accuracy(y_pred, y_true):
     
     return sum(p == t for p, t in zip(y_pred, y_true)) / len(y_true)
 
-
 def predict_with_inflection(train_pos_dist_data, test_data, fill_pos_dist, word_sample = False, fill_sample = False):
     random.seed(42)
     word_pos_pred = []
@@ -116,7 +112,6 @@ def predict_with_inflection(train_pos_dist_data, test_data, fill_pos_dist, word_
                 word_pos_pred.append(pos)
     
     return word_pos_pred
-
 
 def get_bigram_dict(data):
     counts = {}
