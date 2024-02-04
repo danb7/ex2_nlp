@@ -17,7 +17,7 @@ class Base_POS_Model():
         self.word_most_freq_pos = self.get_word_most_freq_pos()
         self.most_freq_pos = self.get_most_freq_pos()
 
-    def get_all_words_pos(sef, data):
+    def get_all_words_pos(self, data):
         pos_list = []
         for sen in data:
             for token in sen.split():
