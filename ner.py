@@ -1,4 +1,5 @@
 import codecs
+import subprocess
 import utils
 
 def _read_data(fname):
@@ -113,3 +114,4 @@ ner_base_model.fit(normalized_train_data)
 y_dev_pred = ner_base_model.predict(dev_sentences)
 
 ner_base_model.save_prediction_to_file(dev_sentences, y_dev_pred, r'ner_pred_on_dev_base_model.txt')
+subprocess.run(['python', 'ner_eval.py', r'data\ner\dev', r'ner_pred_on_dev_base_model.txt'], check=True)

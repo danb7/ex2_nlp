@@ -106,7 +106,7 @@ Romania/I-LOC -/O Cosmin/O Contra/O (/O 31st/O )/O ,/O Mihai/O Tararache/O (/O 7
 Lithuania/I-LOC -/O Danius/O Gleveckas/O (/O 13rd/O )/O
 Attendance/O :/O 200/O
 -DOCSTART-/O
-SOCCER/O -/O ROTOR/I-ORG FANS/O LOCKED/O OUT/O AFTER/O VOLGOGRAD/I-ORG VIOLENCE/I-ORG ./O
+SOCCER/O -/O ROTOR/I-ORG FANS/O LOCKED/O OUT/O AFTER/O VOLGOGRAD/I-ORG VIOLENCE/O ./O
 MOSCOW/I-LOC 1996-08-30/O
 Rotor/I-ORG Volgograd/I-ORG must/O play/O their/O next/O home/O game/O behind/O closed/O doors/O after/O fans/O hurled/O bottles/O and/O stones/O at/O Dynamo/I-ORG Moscow/I-LOC players/O during/O a/O 1-0/O home/O defeat/O on/O Saturday/O that/O ended/O Rotor/I-ORG 's/O brief/O spell/O as/O league/O leaders/O ./O
 The/O head/O of/O the/O Russian/I-MISC league/O 's/O disciplinary/O committee/O ,/O Anatoly/I-PER Gorokhovsky/O ,/O said/O on/O Friday/O that/O Rotor/I-ORG would/O play/O Lada/I-ORG Togliatti/I-ORG to/O empty/O stands/O on/O September/O 3/O ./O
@@ -691,7 +691,7 @@ The/O 12/O month/O figure/O quickened/O to/O 40.3/O percent/O in/O July/O ./O
 The/O leu/O currency/O has/O slipped/O only/O gradually/O this/O year/O ,/O and/O is/O currently/O quoted/O at/O an/O official/O rate/O of/O 3,162/O to/O the/O dollar/O ,/O well/O below/O the/O 3,550/O retail/O price/O that/O exporters/O say/O is/O more/O realistic/O ./O
 --/O Luli/O Popescu/O ,/O Bucharest/I-ORG Newsroom/I-ORG 40-1/O 3120264/O
 -DOCSTART-/O
-POLISH/I-MISC NBP/O REFRAINS/O FROM/O REVERSE/O REPO/O OPERATION/I-MISC ./O
+POLISH/I-MISC NBP/O REFRAINS/O FROM/O REVERSE/O REPO/O OPERATION/O ./O
 WARSAW/I-LOC 1996-08-30/O
 The/O National/I-ORG Bank/I-ORG of/O Poland/I-LOC
 refrained/O from/O staging/O a/O reverse/O repo/O operation/O on/O Friday/O ,/O the/O
@@ -810,7 +810,7 @@ FRANCE/I-LOC -/O Bond/O and/O PIBOR/O futures/O ended/O the/O day/O higher/O des
 The/O September/O notional/O bond/O future/O on/O the/O MATIF/O in/O Paris/I-LOC settled/O at/O 123.14/O ,/O up/O 0.04/O from/O Thursday/O 's/O settlement/O price/O ./O
 ITALY/I-LOC -/O Bond/O futures/O held/O to/O easier/O levels/O in/O late/O afternoon/O after/O the/O sharp/O drop/O in/O Treasuries/I-ORG ,/O but/O a/O resilient/O lira/O helped/O limit/O BTP/O losses/O ./O
 The/O September/O bond/O future/O on/O LIFFE/I-ORG was/O trading/O at/O 115.45/O ,/O down/O 0.13/O from/O Thursday/O 's/O settlement/O price/O ./O
-UNITED/I-ORG STATES/I-LOC -/O Prices/O of/O U.S./I-LOC Treasury/I-ORG securities/O were/O trading/O sharply/O lower/O near/O midday/O after/O a/O surprisingly/O strong/O Chicago/I-LOC Purchasing/O Managers/I-ORG '/O report/O shook/O the/O markets/O ahead/O of/O the/O long/O Labour/I-ORG Day/I-MISC weekend/O ./O
+UNITED/I-ORG STATES/O -/O Prices/O of/O U.S./I-LOC Treasury/I-ORG securities/O were/O trading/O sharply/O lower/O near/O midday/O after/O a/O surprisingly/O strong/O Chicago/I-LOC Purchasing/O Managers/I-ORG '/O report/O shook/O the/O markets/O ahead/O of/O the/O long/O Labour/I-ORG Day/I-MISC weekend/O ./O
 The/O September/O Treasury/I-ORG bond/O future/O on/O the/O Chicago/I-LOC Board/I-ORG of/O Trade/O was/O trading/O at/O 107-11/32/O ,/O down/O 26/32/O from/O Thursday/O 's/O settlement/O price/O ./O
 The/O long/O bond/O was/O quoted/O to/O yield/O 7.12/O percent/O ./O
 JAPAN/I-LOC -/O Yield/O for/O benchmark/O 182nd/O cash/O bond/O fell/O on/O buy-backs/O following/O weaker-than-expected/O industrial/O output/O data/O ,/O which/O convinced/O traders/O the/O BOJ/I-ORG would/O not/O raise/O interest/O rates/O soon/O ./O
@@ -1509,12 +1509,12 @@ WORLD/O MARKETS/O ROUND-UP/O
 STOCKS/O GOLD/O METALS/O
 NY/O Dow/I-MISC close/O London/I-LOC opening/O LME/I-ORG close/O
 5647.65/O (/O -/O 64.73/O )/O $/O 387.70/O copper/O per/O tonne/O
-Nikkei/I-MISC latest/O CRUDE/O OIL/I-ORG $/O 1987.0/O
+Nikkei/I-MISC latest/O CRUDE/O OIL/O $/O 1987.0/O
 20202.87/O (/O -/O 350.29/O )/O Sept/O Brent/I-ORG zinc/O per/O tonne/O
 FTSE/I-MISC close/O $/O 21.25/O $/O 1000.0/O
 3885.0/O (/O -/O 33.7/O )/O
 -----/O oOo-----/O
-STOCKS/O SINK/O AS/O BOND/O RATES/O JUMP/O ON/O STRONG/O DATA/I-ORG
+STOCKS/O SINK/O AS/O BOND/O RATES/O JUMP/O ON/O STRONG/O DATA/O
 Blue-chip/O stocks/O sank/O to/O their/O biggest/O loss/O since/O mid-July/O Thursday/O as/O fresh/O signs/O of/O a/O surprisingly/O strong/O economy/O boosted/O long-term/O bond/O interest/O rates/O above/O 7/O percent/O ./O
 The/O dollar/O rose/O slightly/O against/O the/O German/I-MISC mark/O ,/O but/O edged/O lower/O against/O the/O Japanese/I-MISC yen/O ./O
 The/O Dow/I-MISC Jones/I-PER industrial/O average/O ended/O down/O 64.73/O points/O at/O 5,647.65/O ,/O its/O largest/O drop/O since/O July/O 15/O ,/O when/O it/O closed/O with/O a/O loss/O of/O 161/O points/O ./O
@@ -1746,7 +1746,7 @@ The/O Palestinian/I-MISC letter/O from/O Marwan/I-PER Jilani/O said/O the/O dest
 On/O Tuesday/O ,/O Israeli/I-MISC crews/O hoisted/O a/O bulldozer/O over/O the/O walls/O of/O Jerusalem/I-LOC 's/O old/O city/O and/O demolished/O the/O centre/O ,/O saying/O it/O was/O being/O restored/O without/O a/O building/O permit/O ./O
 Canada/I-LOC had/O recently/O donated/O $/O 30/O million/O to/O the/O centre/O ,/O called/O the/O Burj/O al-Laqlaq/O Society/I-ORG ./O
 -DOCSTART-/O
-SOCCER/O -/O REAL/I-ORG SCRAPE/O 1-1/O DRAW/O IN/O SCRAPPY/O OPENING/O MATCH/O ./O
+SOCCER/O -/O REAL/O SCRAPE/O 1-1/O DRAW/O IN/O SCRAPPY/O OPENING/O MATCH/O ./O
 LA/I-ORG CORUNA/O ,/O Spain/I-LOC 1996-08-31/O
 A/O late/O goal/O by/O newly-signed/O defender/O Roberto/I-PER Carlos/I-PER saved/O the/O blushes/O of/O Real/I-ORG Madrid/I-ORG coach/O Fabio/I-PER Capello/O and/O his/O multi-billion/O peseta/O line-up/O in/O the/O opening/O game/O of/O the/O Spanish/I-MISC championship/O on/O Saturday/O ./O
 The/O Brazilian/I-MISC 's/O 79th-minute/O effort/O was/O enough/O to/O earn/O Real/I-ORG a/O point/O from/O a/O scrappy/O 1-1/O draw/O at/O fellow/O title/O contenders/O Deportivo/I-ORG Coruna/O ./O
@@ -1982,7 +1982,7 @@ Bob/I-PER Wickman/I-PER (/O 6-1/O )/O pitched/O 2/O 2/3/O hitless/O innings/O fo
 Matt/I-PER Lawton/I-PER hit/O a/O three-run/O homer/O off/O closer/O Mike/I-PER Fetters/O with/O one/O out/O in/O the/O ninth/O to/O give/O Minnesota/I-LOC a/O 4-2/O lead/O ./O
 But/O Milwaukee/I-ORG tied/O it/O up/O in/O the/O bottom/O of/O the/O ninth/O on/O pinch-hitter/O Dave/I-PER Nilsson/I-PER 's/O two-run/O double/O ./O
 -DOCSTART-/O
-CRICKET/O -/O ESSEX/I-ORG AND/O KENT/I-ORG MADE/I-ORG TO/O SWEAT/O IN/O TITLE/O RACE/O ./O
+CRICKET/O -/O ESSEX/I-ORG AND/O KENT/I-ORG MADE/O TO/O SWEAT/O IN/O TITLE/O RACE/O ./O
 LONDON/I-LOC 1996-08-31/O
 Essex/I-ORG and/O Kent/I-ORG both/O face/O tense/O finishes/O on/O Monday/O as/O they/O attempt/O to/O keep/O pace/O with/O title/O hopefuls/O Derbyshire/I-ORG and/O Surrey/I-ORG ,/O convincing/O three-day/O victors/O on/O Saturday/O ,/O in/O the/O English/I-MISC county/O championship/O run-in/O ./O
 Essex/I-ORG need/O another/O 148/O with/O five/O wickets/O in/O hand/O to/O beat/O Yorkshire/I-ORG after/O a/O maiden/O first-class/O century/O from/O Richard/I-PER Kettleborough/O transformed/O a/O match/O which/O his/O side/O had/O seemed/O certain/O to/O lose/O ./O
@@ -2047,7 +2047,7 @@ Wales/I-LOC beat/O San/I-LOC Marino/I-LOC 6-0/O (/O halftime/O 4-0/O )/O in/O a/
 Scorers/O :/O Dean/I-PER Saunders/I-MISC (/O 2nd/O minute/O ,/O 75th/O )/O ,/O Mark/I-PER Hughes/I-PER (/O 25th/O ,/O 54th/O )/O ,/O Andy/I-PER Melville/O (/O 33rd/O )/O ,/O John/I-PER Robinson/I-PER (/O 45th/O )/O ./O
 Attendance/O :/O 15,150/O
 -DOCSTART-/O
-SOCCER/O -/O UKRAINE/I-LOC BEAT/O NORTHERN/I-LOC IRELAND/I-LOC IN/O WORLD/O CUP/I-MISC QUALIFIER/O ./O
+SOCCER/O -/O UKRAINE/I-LOC BEAT/O NORTHERN/O IRELAND/I-LOC IN/O WORLD/O CUP/I-MISC QUALIFIER/O ./O
 BELFAST/O 1996-08-31/O
 Ukraine/I-LOC beat/O Northern/I-LOC Ireland/I-LOC 1-0/O (/O halftime/O 0-0/O )/O in/O a/O World/I-MISC Cup/I-MISC soccer/O European/I-MISC group/O nine/O qualifier/O on/O Saturday/O ./O
 Scorer/O :/O Sergei/I-PER Rebrov/O (/O 79th/O minute/O )/O
@@ -2312,7 +2312,7 @@ Centre/I-LOC Walter/I-PER Little/I-PER followed/O up/O Mehrtens/I-PER '/O kick/O
 South/I-LOC Africa/I-LOC -/O 15/O -/O Andre/I-PER Joubert/O ,/O 14/O -/O Justin/I-PER Swart/O ,/O 13/O -/O Japie/I-PER Mulder/I-PER (/O Joel/I-PER Stransky/I-PER ,/O 48/O mins/O )/O 12/O -/O Danie/I-PER van/I-PER Schalkwyk/I-PER ,/O 11/O -/O Pieter/I-PER Hendriks/I-PER ;/O 10/O -/O Henry/I-PER Honiball/O ,/O 9/O -/O Joost/I-PER van/I-PER der/I-PER Westhuizen/I-PER ;/O 8/O -/O Gary/I-PER Teichmann/I-PER (/O captain/O )/O ,/O 7/O -/O Andre/I-PER Venter/O (/O Wayne/I-PER Fyvie/O ,/O 75/O )/O ,/O 6/O -/O Ruben/I-PER Kruge/O ,/O 5/O -/O Mark/I-PER Andrews/I-PER (/O Fritz/I-PER van/I-PER Heerden/O ,/O 39/O )/O ,/O 4/O -/O Kobus/O Wiese/O ,/O 3/O -/O Marius/O Hurter/O ,/O 2/O -/O James/I-PER Dalton/O ,/O 1/O -/O Dawie/O Theron/O (/O Garry/I-PER Pagel/O ,/O 66/O )/O ./O
 New/I-LOC Zealand/I-LOC -/O 15/O -/O Christian/I-PER Cullen/I-PER (/O Alama/O Ieremia/O ,/O 70/O )/O ,/O 14/O -/O Jeff/I-PER Wilson/I-PER ,/O 13/O -/O Walter/I-PER Little/I-PER ,/O 12/O -/O Frank/I-PER Bunce/I-PER ,/O 11/O -/O Glen/I-PER Osborne/I-PER ;/O 10/O -/O Andrew/I-PER Mehrtens/I-PER ,/O 9/O -/O Justin/I-PER Marshall/I-PER ;/O 8/O -/O Zinzan/I-PER Brooke/I-PER ,/O 7/O -/O Josh/I-PER Kronfeld/I-PER ,/O 6/O -/O Michael/I-PER Jones/I-PER (/O Glenn/I-PER Taylor/I-PER ,/O 53/O )/O ,/O 5/O -/O Robin/I-PER Brooke/I-PER ,/O 4/O -/O Ian/I-PER Jones/I-PER ,/O 3/O -/O Olo/I-PER Brown/I-PER ,/O 2/O -/O Sean/I-PER Fitzpatrick/I-PER (/O captain/O )/O ,/O 1/O -/O Craig/I-PER Dowd/I-PER ./O
 -DOCSTART-/O
-RUGBY/I-ORG UNION/I-ORG -/O SOUTH/I-LOC AFRICA/I-LOC BEAT/O ALL/O BLACKS/I-ORG 32-22/O ./O
+RUGBY/I-ORG UNION/I-ORG -/O SOUTH/I-LOC AFRICA/I-LOC BEAT/O ALL/O BLACKS/O 32-22/O ./O
 JOHANNESBURG/I-LOC 1996-08-31/O
 South/I-LOC Africa/I-LOC beat/O New/I-LOC Zealand/I-LOC 32-22/O (/O haltime/O 16-8/O )/O in/O the/O final/O test/O match/O of/O their/O three-test/O series/O at/O Ellis/I-PER Park/I-ORG on/O Saturday/O ./O
 Scorers/O :/O
@@ -2324,7 +2324,7 @@ Conversions/O :/O Andrew/I-PER Mehrtens/I-PER (/O 2/O )/O ./O
 Penalties/O :/O Mehrtens/I-PER ./O
 New/I-LOC Zealand/I-LOC win/O test/O series/O 2-1/O ./O
 -DOCSTART-/O
-SOCCER/O -/O MAURITANIA/I-LOC DISSOLVES/O NATIONAL/I-MISC TEAM/I-ORG AFTER/O CUP/I-MISC EXIT/O ./O
+SOCCER/O -/O MAURITANIA/I-LOC DISSOLVES/O NATIONAL/I-MISC TEAM/O AFTER/O CUP/I-MISC EXIT/O ./O
 NOUAKCHOTT/I-LOC 1996-08-31/O
 Mauritania/I-LOC 's/O soccer/O federation/O dissolved/O the/O national/O team/O and/O suspended/O this/O season/O 's/O domestic/O championship/O on/O Saturday/O in/O the/O wake/O of/O the/O country/O 's/O failure/O to/O qualify/O for/O the/O African/I-MISC Nations/I-ORG '/O Cup/I-MISC ./O
 "/O Since/O Mauritania/I-LOC has/O been/O eliminated/O on/O all/O fronts/O and/O the/O next/O commitments/O are/O not/O for/O another/O two/O years/O ,/O we/O have/O reason/O to/O take/O a/O break/O ,/O "/O federation/O president/O Mohamed/I-PER Lemine/O Cheiguer/O said/O ./O
@@ -2505,7 +2505,7 @@ Steve/I-PER Stricker/I-PER ,/O who/O tied/O for/O second/O at/O last/O week/O 's
 Duffy/I-PER Waldorf/I-PER ,/O who/O also/O tied/O for/O second/O at/O the/O World/I-MISC Series/I-MISC of/O Golf/I-MISC ,/O carded/O a/O 70/O to/O lead/O a/O group/O of/O six/O golfers/O at/O 13/O under/O ,/O including/O Kraft/O ./O
 The/O top/O four/O on/O the/O PGA/I-MISC Tour/I-MISC money/O list/O all/O skipped/O the/O tournament/O ./O
 -DOCSTART-/O
-TENNIS/O -/O SPAIN/I-LOC ,/O U.S./I-LOC TEAMS/O OPEN/I-MISC ON/O ROAD/I-LOC FOR/O 1997/O FED/I-ORG CUP/I-MISC ./O
+TENNIS/O -/O SPAIN/I-LOC ,/O U.S./I-LOC TEAMS/O OPEN/I-MISC ON/O ROAD/O FOR/O 1997/O FED/O CUP/I-MISC ./O
 Richard/I-PER Finn/I-PER
 NEW/I-LOC YORK/I-LOC 1996-08-31/O
 This/O year/O 's/O Fed/I-ORG Cup/I-MISC finalists/O --/O defending/O champion/O Spain/I-LOC and/O the/O United/I-LOC States/I-LOC --/O will/O hit/O the/O road/O to/O open/O the/O 1997/O women/O 's/O international/O team/O competition/O ,/O based/O on/O the/O draw/O conducted/O Saturday/O at/O the/O U.S./I-LOC Open/I-MISC ./O
@@ -2532,7 +2532,7 @@ Results/O from/O the/O U.S./I-LOC Open/I-MISC Tennis/I-LOC Championships/I-MISC 
 Women/O 's/O singles/O ,/O third/O round/O 1/O -/O Steffi/I-PER Graf/I-PER (/O Germany/I-LOC )/O beat/O Natasha/I-PER Zvereva/I-PER (/O Belarus/I-LOC )/O 6-4/O 6-2/O 16/O -/O Martina/I-PER Hingis/I-PER (/O Switzerland/I-LOC )/O beat/O Naoko/I-PER Kijimuta/I-PER (/O Japan/I-LOC )/O 6-2/O 6-2/O Judith/I-PER Wiesner/I-PER (/O Austria/I-LOC )/O beat/O Petra/I-ORG Langrova/I-PER (/O Czech/I-LOC Republic/I-LOC )/O 6/O -/O 2/O 6-0/O
 Men/O 's/O singles/O ,/O third/O round/O 13/O -/O Thomas/I-PER Enqvist/I-PER (/O Sweden/I-LOC )/O beat/O Pablo/I-PER Campana/I-PER (/O Ecuador/I-LOC )/O 6-4/O 6-4/O 6-2/O
 -DOCSTART-/O
-TENNIS/O -/O DRAW/O FOR/O 1997/O FED/I-ORG CUP/I-MISC WOMEN/O 'S/O TEAM/I-ORG TOURNAMENT/O ./O
+TENNIS/O -/O DRAW/O FOR/O 1997/O FED/O CUP/I-MISC WOMEN/O 'S/O TEAM/O TOURNAMENT/O ./O
 NEW/I-LOC YORK/I-LOC 1996-08-31/O
 Draw/O for/O the/O women/O 's/O 1997/O Fed/I-ORG Cup/I-MISC team/O tennis/O championships/O ,/O as/O conducted/O at/O the/O U.S./I-LOC Open/I-MISC on/O Saturday/O :/O
 World/I-MISC Group/I-ORG I/O ,/O first/O round/O (/O March/O 1-2/O )/O
@@ -2709,7 +2709,7 @@ Like/O I/O said/O many/O times/O ,/O I/O think/O it/O 's/O a/O very/O little/O c
 If/O I/O play/O great/O tennis/O ,/O that/O could/O take/O me/O a/O long/O way/O ./O
 "/O A/O lot/O of/O things/O can/O happen/O ,/O like/O tonight/O ./O "/O
 -DOCSTART-/O
-BOXING/O -/O PRINCE/I-PER NASEEM/O RETAINS/O WBO/O FEATHERWEIGHT/O TITLE/O ./O
+BOXING/O -/O PRINCE/O NASEEM/O RETAINS/O WBO/O FEATHERWEIGHT/O TITLE/O ./O
 DUBLIN/I-LOC 1996-08-31/O
 Britain/I-LOC 's/O Naseem/O Hamed/O retained/O his/O WBO/O featherweight/O title/O on/O Saturday/O when/O Mexico/I-LOC 's/O Manuel/I-PER Medina/O was/O retired/O by/O his/O corner/O at/O the/O end/O of/O the/O 11th/O round/O ./O
 -DOCSTART-/O
