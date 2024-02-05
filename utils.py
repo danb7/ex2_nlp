@@ -1,3 +1,4 @@
+import codecs
 from collections import Counter
 import random
 
@@ -191,3 +192,34 @@ def bigram_predict_with_inflection(train_pos_word_dist_data, train_pos_dist_data
             prev_pos = pos
     
     return word_pos_pred
+
+# For NER
+def _read_data(fname):
+    '''from ner_eval.py'''
+    for line in codecs.open(fname):
+        line = line.strip().split()
+        tagged = [x.rsplit("/",1) for x in line]
+        yield tagged
+
+def _normalize_bio(tagged_sent):
+    '''from ner_eval.py'''
+    last_bio, last_type = "O","O"
+    normalized = []
+    for word, tag in tagged_sent:
+        if tag == "O": tag = "O-O"
+        bio,typ = tag.split("-",1)
+        if bio=="I" and last_bio=="O": bio="B"
+        if bio=="I" and last_type!=typ: bio="B"
+        normalized.append((word,(bio,typ)))
+        last_bio,last_type=bio,typ
+    return normalized
+    
+def get_ner_data(file_name):
+    return [_normalize_bio(tagged) for tagged in _read_data(file_name)]
+
+def get_ner_data_with_no_tags(file_name):
+    data = []
+    for tagged_sentence in _read_data(file_name):
+        sent = [word for word, tag in tagged_sentence]
+        data += [sent]
+    return data

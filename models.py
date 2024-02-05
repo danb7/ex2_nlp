@@ -275,3 +275,70 @@ class Contextualized_Vector_POS_Model(Bigram_POS_Model):
 
         print(time.time()-start, cum_fill_time, time.time()-start-cum_fill_time, )
         return word_pos_pred
+
+class Base_NER_Model():
+
+    def fit(self, train_data):
+        self.data_sentences = train_data
+        self.train_word_ner_freq = self._get_word_freq_per_ner()
+        self.word_most_freq_tag = self._get_word_most_freq_tag()
+        self.most_freq_tag = self._get_most_freq_tag()
+
+
+    def _get_word_freq_per_ner(self):
+        counts = {}
+        for sentence in self.data_sentences:
+            for (word, (bio, ner_tag)) in sentence:
+                if word not in counts:
+                    counts[word] = {}
+                counts[word][ner_tag] = counts[word].get(ner_tag, 0) + 1
+        return counts
+
+    def _get_word_most_freq_tag(self):
+        return {word: max(self.train_word_ner_freq[word], key=self.train_word_ner_freq[word].get) for word in self.train_word_ner_freq}
+    
+    def _get_most_freq_tag(self):
+        all_tags = []
+        for sentence in self.data_sentences:
+            for (word, (bio, tag)) in sentence:
+                all_tags += [tag]
+        return max(set(all_tags), key=all_tags.count)
+    
+    def _inflect_word_if_missing(self, word):
+        if word not in self.train_word_ner_freq:
+            if word.capitalize() in self.train_word_ner_freq: word = word.capitalize()
+            if word.lower() in self.train_word_ner_freq: word = word.lower()
+        return word
+
+
+    def predict(self, test_data):
+        words_preds = []
+        for sentence in test_data:
+            for word in sentence:
+                word = self._inflect_word_if_missing(word)
+                if word not in self.train_word_ner_freq:
+                    tag = self.most_freq_tag
+                    words_preds.append(tag)
+                else:
+                    tag = self.word_most_freq_tag[word]
+                    words_preds.append(tag)
+        return words_preds
+    
+
+    def save_prediction_to_file(self, test_data, y_pred, test_file_path):
+        output_string_list = []
+        i = 0
+        for sentence in test_data:
+            sentence_tag = []
+            for word in sentence:
+                if y_pred[i]=='O':
+                    tag = y_pred[i]
+                else:
+                    tag = f'I-{y_pred[i]}'
+                sentence_tag.append(f'{word}/{tag}')
+                i += 1
+
+            output_string_list.append(f"{' '.join(sentence_tag)}\n")
+
+        with open(test_file_path, 'w') as file:
+            file.writelines(output_string_list)
