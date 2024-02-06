@@ -13,11 +13,12 @@ dev_file = r'data\ner\dev'
 normalized_train_data = utils.get_ner_data(train_file)
 dev_sentences = utils.get_ner_data_with_no_tags(dev_file)
 
-train_words = set([word for sentence in normalized_train_data for (word, (bio,tag)) in sentence])
-dev_words = set([word for sentence in dev_sentences for word in sentence])
+train_words = set([word for sentence in normalized_train_data for (word, (bio,tag)) in sentence if tag!='O'])
+dev_words = set([word for sentence in utils.get_ner_data(dev_file) for (word, (bio,tag)) in sentence if tag!='O'])
+# dev_words = set([word for sentence in dev_sentences for word in sentence])
 
+print(len(dev_words), len(train_words))
 print(len(dev_words.difference(train_words)))
-print(len(dev_words))
 #############################Base##############################
 ner_base_model = models.Base_NER_Model()
 ner_base_model.fit(normalized_train_data)
