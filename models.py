@@ -278,12 +278,29 @@ class Contextualized_Vector_POS_Model(Bigram_POS_Model):
 
 class Base_NER_Model():
 
+    def __init__(self, extension={}):
+        '''
+        extension_dict need to be a dict with the format:
+        {
+            'language_model': LM,
+            'tokenizer': Tokenizer
+            'topk_words': Number, default 50
+            'topk_sims': Number, default 3
+        }
+        '''
+        self.extension_dict = extension
+        self.language_model = extension.get('language_model', None)
+        self.tokenizer = extension.get('tokenizer', None)
+        self.topk_words = extension.get('topk_words', 50)
+        self.topk_sims = extension.get('topk_sims', 3)
+
     def fit(self, train_data):
         self.data_sentences = train_data
         self.train_word_ner_freq = self._get_word_freq_per_ner()
         self.word_most_freq_tag = self._get_word_most_freq_tag()
         self.most_freq_tag = self._get_most_freq_tag()
-
+        if self.extension_dict:
+            self.word_most_freq_tag.update(self._extend_data(self.topk_words, self.topk_sims))
 
     def _get_word_freq_per_ner(self):
         counts = {}
@@ -304,6 +321,57 @@ class Base_NER_Model():
                 all_tags += [tag]
         return max(set(all_tags), key=all_tags.count)
     
+
+    def get_top_k_oov_predictions(self, logits, word_index, k=5):#######################
+        '''ensuring known words'''
+        probabilities = torch.nn.functional.softmax(logits[0, word_index, :], dim=-1)
+        sort_indices = torch.argsort(probabilities, descending =True)
+        k_counter = 0
+        predicted_tokens = []
+        predicted_probabilities = []
+        for i in sort_indices:
+            decoded_i = self.tokenizer.decode(i)
+            decoded_i = decoded_i.strip()
+            if (decoded_i not in self.train_word_ner_freq) and (decoded_i.isalpha()) and (len(decoded_i)>1):
+                k_counter += 1
+                predicted_tokens += [decoded_i]
+                predicted_probabilities += [probabilities[i].item()]
+            if k_counter == k:
+                break
+            
+        top_k_predictions = predicted_tokens[:k]
+        top_k_probabilities = predicted_probabilities[:k]
+        
+        return {'predicted_tokens': top_k_predictions, 'probas': top_k_probabilities}
+    
+    def _get_first_occur_sentence_of_word_and_tag(self, target_word, target_tag):
+        '''return a sentence contain this word with this tag and its position'''
+        for sentence in self.data_sentences:
+            for i, (word, (bio, ner_tag)) in enumerate(sentence):
+                if (word==target_word) and (ner_tag==target_tag):
+                    plain_sentence = [word2 for (word2, (bio2, ner_tag2)) in sentence]
+                    return plain_sentence, i
+        raise ValueError("word not in data")
+    
+    def _extend_data(self, topk_words=50, topk_sims=3):#######################
+        extension = {}
+        sorted_words_in_train = dict(sorted(self.train_word_ner_freq.items(), key=lambda x: sum(x[1].values()), reverse=True))
+        filtered_sorted_words_in_train = {key: value for key, value in sorted_words_in_train.items() if max(value.values()) != value.get('O', 0)}
+        top_words = list(filtered_sorted_words_in_train.keys())[:topk_words]
+        for word in top_words:
+            word_most_frq_tag = self.word_most_freq_tag[word]
+            sent, loc = self._get_first_occur_sentence_of_word_and_tag(word, word_most_frq_tag)           
+            masked_sentence = ' '.join([word if i != loc else '<mask>' for i, word in enumerate(sent)])
+
+            tokenized_sentence = self.tokenizer(masked_sentence, return_tensors='pt')
+            mask_index = tokenized_sentence["input_ids"][0].tolist().index(self.tokenizer.mask_token_id)
+            with torch.no_grad():
+                logits = self.language_model(**tokenized_sentence).logits
+            top_k_words = self.get_top_k_oov_predictions(logits, mask_index, topk_sims)['predicted_tokens']
+            for w in top_k_words:
+                extension[w] = word_most_frq_tag
+        return extension
+
     def _inflect_word_if_missing(self, word):
         if word not in self.train_word_ner_freq:
             if word.capitalize() in self.train_word_ner_freq: word = word.capitalize()
@@ -311,11 +379,12 @@ class Base_NER_Model():
         return word
 
 
-    def predict(self, test_data):
+    def predict(self, test_data, inflect_missing=False):
         words_preds = []
         for sentence in test_data:
             for word in sentence:
-                word = self._inflect_word_if_missing(word)
+                if inflect_missing:
+                    word = self._inflect_word_if_missing(word)
                 if word not in self.train_word_ner_freq:
                     tag = self.most_freq_tag
                     words_preds.append(tag)
@@ -342,3 +411,170 @@ class Base_NER_Model():
 
         with open(test_file_path, 'w') as file:
             file.writelines(output_string_list)
+
+class NER_Model_With_PCA_Feats(Base_NER_Model):
+    '''
+    Expand our "features" by add to each word its "features" based on PCA components
+    '''
+    
+    def __init__(self, fitted_pos_model, include_previous=False):
+        self.pretrained_pos_model = fitted_pos_model
+        self.include_previous = include_previous
+
+    def fit(self, train_data):
+        super().fit(train_data)
+        self.data_expansion = self._add_word_pos_to_data()
+        self.word_pos_ner_freq = self._get_ner_freq_per()
+        self.most_freq_tag_per = self._get_feats_most_freq_tag
+        
+    def _extract_sentences(self, data):
+        plain_sentences = []
+        for sentence in data:
+            sentence_list = [word for (word, (bio, ner_tag)) in sentence]
+            plain_sentences += [' '.join(sentence_list)]
+        return plain_sentences
+
+    def _add_word_pos_to_data(self):
+        expanded_data = []
+        pos_model_input = self._extract_sentences(self.data_sentences)
+        pos_tags = self.pretrained_pos_model.bigram_predict_with_contextualized(pos_model_input) # need to be all predict
+        i=0
+        for sentence in self.data_sentences:
+            sentence_list = []
+            for w_loc, (word, (bio, ner_tag)) in enumerate(sentence):
+                if self.include_previous:
+                    prev_pos = pos_tags[i-1] if w_loc!=0 else ''
+                    sentence_list += [(word, (bio, ner_tag, pos_tags[i], prev_pos))] # pay attention to previous
+                else:
+                    sentence_list += [(word, (bio, ner_tag, pos_tags[i]))]
+                i+=1
+            expanded_data += sentence_list
+        return expanded_data
+
+    def _get_ner_freq_per(self):
+        counts = {}
+        for sentence in self.data_expansion:
+            if self.include_previous:
+                for (word, (bio, ner_tag, pos_tag)) in sentence:
+                    feats = f'{word}_{pos_tag}'
+                    if feats not in counts: # necessary?
+                        counts[feats] = {}
+                    counts[feats][ner_tag] = counts[feats].get(ner_tag, 0) + 1
+            else:
+                for (word, (bio, ner_tag, pos_tag, prev_pos_tag)) in sentence:
+                    feats = f'{word}_{pos_tag}_{prev_pos_tag}'
+                    if feats not in counts: # necessary?
+                        counts[feats] = {}
+                    counts[feats][ner_tag] = counts[feats].get(ner_tag, 0) + 1          
+        return counts
+    
+    def _get_feats_most_freq_tag(self):
+        return {feats: max(self.freq[feats], key=self.freq[feats].get) for feats in self.freq}
+
+    def predict(self, test_data, inflect_missing=False):
+        pass
+
+
+class NER_Model_With_POS_Feats(Base_NER_Model):
+    '''
+    Add to our features the POS tag of words with our best POS model
+    '''
+    
+    def __init__(self, fitted_pos_model):
+        super().__init__()
+        self.pretrained_pos_model = fitted_pos_model
+
+    def fit(self, train_data):
+        super().fit(train_data)
+        self.data_expansion = self._add_word_pos_to_data(include_previous=False)
+        self.word_pos_ner_freq = self._get_ner_freq_per(self.data_expansion, include_previous=False)
+        self.most_freq_tag_per = self._get_feats_most_freq_tag(include_previous=False)
+
+        self.data_expansion_with_prev = self._add_word_pos_to_data(include_previous=True)
+        self.word_pos_ner_freq_with_prev = self._get_ner_freq_per(self.data_expansion_with_prev, include_previous=True)
+        self.most_freq_tag_per_with_prev = self._get_feats_most_freq_tag(include_previous=True)
+
+        self.most_freq_tag_by_prev_pos = self._get_most_freq_tag_by_prev_pos()
+        
+    def _extract_sentences(self, data, is_test=False):
+        plain_sentences = []
+        for sentence in data:
+            if not is_test:
+                sentence_list = [word for (word, (bio, ner_tag)) in sentence]
+            else:
+                sentence_list = sentence
+            plain_sentences += [' '.join(sentence_list)]
+        return plain_sentences
+
+    def _add_word_pos_to_data(self, include_previous=False):
+        expanded_data = []
+        pos_model_input = self._extract_sentences(self.data_sentences)
+        pos_tags = self.pretrained_pos_model.bigram_predict(pos_model_input) # need to be all predict
+        i=0
+        for sentence in self.data_sentences:
+            sentence_list = []
+            for w_loc, (word, (bio, ner_tag)) in enumerate(sentence):
+                if include_previous:
+                    prev_pos = pos_tags[i-1] if w_loc!=0 else ''
+                    sentence_list += [(word, (bio, ner_tag, pos_tags[i], prev_pos))] # pay attention to previous
+                else:
+                    sentence_list += [(word, (bio, ner_tag, pos_tags[i]))]
+                i+=1
+            expanded_data += [sentence_list]
+        return expanded_data
+
+    def _get_ner_freq_per(self, data_exp, include_previous=False):
+        counts = {}
+        for sentence in data_exp:
+            if include_previous:
+                for (word, (bio, ner_tag, pos_tag, prev_pos_tag)) in sentence:
+                    feats = f'{word}_{pos_tag}_{prev_pos_tag}'
+                    if feats not in counts:
+                        counts[feats] = {}
+                    counts[feats][ner_tag] = counts[feats].get(ner_tag, 0) + 1
+            else:
+                for (word, (bio, ner_tag, pos_tag)) in sentence:
+                    feats = f'{word}_{pos_tag}'
+                    if feats not in counts:
+                        counts[feats] = {}
+                    counts[feats][ner_tag] = counts[feats].get(ner_tag, 0) + 1  
+        return counts
+    
+    def _get_feats_most_freq_tag(self, include_previous=False):
+        if include_previous:
+            result = {feats: max(self.word_pos_ner_freq_with_prev[feats], key=self.word_pos_ner_freq_with_prev[feats].get) for feats in self.word_pos_ner_freq_with_prev}
+        else:
+            result = {feats: max(self.word_pos_ner_freq[feats], key=self.word_pos_ner_freq[feats].get) for feats in self.word_pos_ner_freq}
+        return result
+    
+    def _get_most_freq_tag_by_prev_pos(self):
+        tags_by_prev_pos_counts = {}
+        for sentence in self.data_expansion_with_prev:
+                for (word, (bio, ner_tag, pos_tag, prev_pos_tag)) in sentence:
+                    if prev_pos_tag not in tags_by_prev_pos_counts:
+                        tags_by_prev_pos_counts[prev_pos_tag] = {}
+                    tags_by_prev_pos_counts[prev_pos_tag][ner_tag] = tags_by_prev_pos_counts[prev_pos_tag].get(ner_tag, 0) + 1
+        
+        max_tags_by_prev_pos_counts = {prev: max(tags_by_prev_pos_counts[prev], key=tags_by_prev_pos_counts[prev].get) for prev in tags_by_prev_pos_counts}
+        return max_tags_by_prev_pos_counts
+    
+    def predict(self, test_data, include_previous_pos=False, inflect_missing=False):
+        words_preds = []
+        pos_model_input = self._extract_sentences(test_data, is_test=True)
+        pos_tags = self.pretrained_pos_model.bigram_predict(pos_model_input)
+        pos_i = 0
+        for sentence in test_data:
+            for w_loc, word in enumerate(sentence):
+                if inflect_missing:
+                    word = self._inflect_word_if_missing(word)
+
+                prev_pos = pos_tags[pos_i-1] if w_loc!=0 else ''
+                ner_tag = self.most_freq_tag_per.get(f'{word}_{pos_tags[pos_i]}', 
+                                                     self.word_most_freq_tag.get(word, 
+                                                                                 self.most_freq_tag_by_prev_pos.get(prev_pos, 'O')))
+                if include_previous_pos:
+                    ner_tag = self.most_freq_tag_per_with_prev.get(f'{word}_{pos_tags[pos_i]}_{prev_pos}', ner_tag)
+
+                pos_i += 1
+                words_preds.append(ner_tag)
+        return words_preds

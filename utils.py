@@ -193,7 +193,7 @@ def bigram_predict_with_inflection(train_pos_word_dist_data, train_pos_dist_data
     
     return word_pos_pred
 
-# For NER
+##################### For NER #####################
 def _read_data(fname):
     '''from ner_eval.py'''
     for line in codecs.open(fname):
