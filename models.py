@@ -493,7 +493,7 @@ class NER_Model_With_POS_Feats(Base_NER_Model):
         self.pretrained_pos_model = fitted_pos_model
         self.language_model = model_dict.get('language_model', None)
         self.tokenizer = model_dict.get('tokenizer', None)
-        self.test_counter = 0
+        # self.test_counter = 0
         self.capitalized_dict = {}
 
     def fit(self, train_data):
@@ -626,9 +626,9 @@ class NER_Model_With_POS_Feats(Base_NER_Model):
                 logits = self.language_model(**tokenized_sentence).logits
             filling_options = self._get_top_k_known_predictions(logits, mask_index, k=3)
             possible_tags = [self._get_best_ner_tag(f, cur_pos, prev_pos, inc_prev) for f in filling_options]
-            self.test_counter += 1
-            if self.test_counter % 100 == 0:
-                print(self.test_counter)
+            # self.test_counter += 1
+            # if self.test_counter % 100 == 0:
+            #     print(self.test_counter)
             chosen_tag = max(possible_tags, key=possible_tags.count)
             self.capitalized_dict[word] = chosen_tag
             return chosen_tag

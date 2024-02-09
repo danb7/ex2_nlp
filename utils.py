@@ -2,13 +2,15 @@ import codecs
 from collections import Counter
 import random
 
-def get_file_data(file_name, lower = False):
+def get_file_data(file_name, lower = False, as_lists=False):
     with open(file_name, 'r') as file:   
         file_data = file.read().splitlines()
     
     if lower:
         file_data = [s.lower() for s in file_data]
-        
+    
+    if as_lists:
+        file_data = [sentence.split() for sentence in file_data]
     return file_data
 
 def get_all_words_no_anotation(data):
