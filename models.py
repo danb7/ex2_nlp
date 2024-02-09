@@ -607,7 +607,7 @@ class NER_Model_With_POS_Feats(Base_NER_Model):
             return 'O'
         elif word in self.capitalized_dict:
             return self.capitalized_dict[word]
-        elif (re.match(r'[A-Z][a-z]+', word)) \
+        elif (re.match(r'[A-Z][A-Za-z]+', word)) \
             and cur_pos in [k for k,v in self.ner_freq_tag_by_pos.items() if ((v['O']/sum(v.values()))<0.99) and (len(k)>1)and(k!="''")] \
             and sum(self.train_word_ner_freq.get(word,{}).values())<10 \
             and word not in ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday",
@@ -615,9 +615,10 @@ class NER_Model_With_POS_Feats(Base_NER_Model):
                              "June", "July", "August", "September", "October", "November", "December",
                              "Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec",
                              "Jan.", "Feb.", "Mar.", "Apr.", "May.", "Jun.", "Jul.", "Aug.", "Sep.", "Oct.", "Nov.", "Dec.",
-                             "First", "Second", "Third", "Fourth", "Fifth", "Sixth", "Seventh", "Eighth", "Ninth", "Tenth"] \
+                             "First", "Second", "Third", "Fourth", "Fifth", "Sixth", "Seventh", "Eighth", "Ninth", "Tenth",
+                             "The"] \
             and original_ner=='O' \
-            and w_loc != 0: # Capitalized words inside sentence that classified as 'O'
+            and True:#w_loc != 0: # Capitalized words inside sentence that classified as 'O'
             masked_sentence = ' '.join([word if i != w_loc else '<mask>' for i, word in enumerate(sentence)])
             tokenized_sentence = self.tokenizer(masked_sentence, return_tensors='pt')
             mask_index = tokenized_sentence["input_ids"][0].tolist().index(self.tokenizer.mask_token_id)
@@ -635,7 +636,14 @@ class NER_Model_With_POS_Feats(Base_NER_Model):
             return prev_ner
         else:
             return original_ner
-        
+    
+    def _repassing_uncertain_entities(self, entity):
+        tags = [tag for word, tag in entity]
+        if (len(entity) > 1) and (len(set(tags))) > 1:
+            mode_tag = max(set(tags), key=tags.count)
+            entity = [(word, mode_tag) for word, tag in entity]
+        return entity
+
     def _get_best_ner_tag(self, word, cur_pos, prev_pos, include_previous=True):
         best_ner_tag = self.most_freq_tag_per.get(f'{word}_{cur_pos}',
                                                      self.word_most_freq_tag.get(word,
@@ -652,6 +660,7 @@ class NER_Model_With_POS_Feats(Base_NER_Model):
         pos_i = 0
         for sentence in test_data:
             prev_ner = ''
+            ent = []
             for w_loc, word in enumerate(sentence):
                 if inflect_missing:
                     word = self._inflect_word_if_missing(word)
@@ -663,8 +672,16 @@ class NER_Model_With_POS_Feats(Base_NER_Model):
                 ner_tag = self._rule_based_fixing(word, ner_tag, pos_tags[pos_i], prev_pos, sentence, w_loc, include_previous_pos, prev_ner)
                 if include_previous_pos:
                     ner_tag = self.most_freq_tag_per_with_prev.get(f'{word}_{pos_tags[pos_i]}_{prev_pos}', ner_tag)
-                
                 pos_i += 1
                 prev_ner = ner_tag
+                if ner_tag != 'O':
+                    ent += [(word, ner_tag)]
+                elif ent:
+                    final_ent = self._repassing_uncertain_entities(ent)
+                    fixed_ners = [t_n for word, t_n in final_ent]
+                    modify_len = len(fixed_ners)
+                    words_preds[-modify_len:] = fixed_ners
+                    ent = []
                 words_preds.append(ner_tag)
+
         return words_preds

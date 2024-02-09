@@ -213,6 +213,23 @@ def _normalize_bio(tagged_sent):
         normalized.append((word,(bio,typ)))
         last_bio,last_type=bio,typ
     return normalized
+
+def _get_entities(sent):
+    ent=[]
+    for i,(word,tag) in enumerate(sent):
+        bio,typ=tag
+        if bio=="B":
+            if ent: yield tuple(ent)
+            ent=[]
+            ent.append(i)
+            ent.append(typ)
+            ent.append(word)
+        if bio=="I":
+            ent.append(word)
+        if bio=="O":
+            if ent: yield tuple(ent)
+            ent=[]
+    if ent: yield tuple(ent)
     
 def get_ner_data(file_name):
     return [_normalize_bio(tagged) for tagged in _read_data(file_name)]
