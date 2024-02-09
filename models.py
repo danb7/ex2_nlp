@@ -1,5 +1,6 @@
 from collections import Counter
 import random
+import re
 import gensim.downloader as dl
 from transformers import RobertaTokenizerFast, RobertaForMaskedLM
 import torch
@@ -480,9 +481,20 @@ class NER_Model_With_POS_Feats(Base_NER_Model):
     Add to our features the POS tag of words with our best POS model
     '''
     
-    def __init__(self, fitted_pos_model):
+    def __init__(self, fitted_pos_model, model_dict):
+        '''
+        model_dict need to be a dict in the following format:
+        {
+            'language_model': LM,
+            'tokenizer': Tokenizer
+        }
+        '''
         super().__init__()
         self.pretrained_pos_model = fitted_pos_model
+        self.language_model = model_dict.get('language_model', None)
+        self.tokenizer = model_dict.get('tokenizer', None)
+        self.test_counter = 0
+        self.capitalized_dict = {}
 
     def fit(self, train_data):
         super().fit(train_data)
@@ -494,7 +506,10 @@ class NER_Model_With_POS_Feats(Base_NER_Model):
         self.word_pos_ner_freq_with_prev = self._get_ner_freq_per(self.data_expansion_with_prev, include_previous=True)
         self.most_freq_tag_per_with_prev = self._get_feats_most_freq_tag(include_previous=True)
 
-        self.most_freq_tag_by_prev_pos = self._get_most_freq_tag_by_prev_pos()
+        # self.most_freq_tag_by_prev_pos = self._get_most_freq_tag_by_prev_pos()
+        self.ner_freq_tag_by_pos = self._get_most_freq_tag_by_pos(arg_max=False)
+        self.most_freq_tag_by_pos = self._get_most_freq_tag_by_pos()
+        self.most_freq_tag_by_pos_w_prev = self._get_most_freq_tag_by_pos(include_previous=True)
         
     def _extract_sentences(self, data, is_test=False):
         plain_sentences = []
@@ -558,23 +573,98 @@ class NER_Model_With_POS_Feats(Base_NER_Model):
         max_tags_by_prev_pos_counts = {prev: max(tags_by_prev_pos_counts[prev], key=tags_by_prev_pos_counts[prev].get) for prev in tags_by_prev_pos_counts}
         return max_tags_by_prev_pos_counts
     
+    def _get_most_freq_tag_by_pos(self, include_previous=False, arg_max=True):
+        tags_by_pos_counts = {}
+        for sentence in self.data_expansion_with_prev:
+                for (word, (bio, ner_tag, pos_tag, prev_pos_tag)) in sentence:
+                    pos_feat = f'{prev_pos_tag}_{pos_tag}' if include_previous else pos_tag
+                    if pos_feat not in tags_by_pos_counts:
+                        tags_by_pos_counts[pos_feat] = {}
+                    tags_by_pos_counts[pos_feat][ner_tag] = tags_by_pos_counts[pos_feat].get(ner_tag, 0) + 1
+        
+        max_tags_by_pos_counts = {feat: max(tags_by_pos_counts[feat], key=tags_by_pos_counts[feat].get) for feat in tags_by_pos_counts}
+        return_dict = max_tags_by_pos_counts if arg_max else tags_by_pos_counts
+        return return_dict
+    
+    def _get_top_k_known_predictions(self, logits, word_index, k=5):
+        '''ensuring known words'''
+        sort_indices = torch.argsort(logits[0, word_index, :], descending =True)
+        k_counter = 0
+        predicted_tokens = []
+        for i in sort_indices:
+            decoded_i = self.tokenizer.decode(i)
+            decoded_i = decoded_i.strip()
+            if (decoded_i in self.word_most_freq_tag) and (decoded_i.isalpha()) and (len(decoded_i)>1):
+                k_counter += 1
+                predicted_tokens += [decoded_i]
+            if k_counter == k:
+                break
+                    
+        return predicted_tokens
+    
+    def _rule_based_fixing(self, word, original_ner, cur_pos, prev_pos, sentence, w_loc, inc_prev, prev_ner):
+        if re.match(r'^[0-9-:]+$', word): # numbers
+            return 'O'
+        elif word in self.capitalized_dict:
+            return self.capitalized_dict[word]
+        elif (re.match(r'[A-Z][a-z]+', word)) \
+            and cur_pos in [k for k,v in self.ner_freq_tag_by_pos.items() if ((v['O']/sum(v.values()))<0.99) and (len(k)>1)and(k!="''")] \
+            and sum(self.train_word_ner_freq.get(word,{}).values())<10 \
+            and word not in ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday",
+                             "Friday", "Saturday", "January", "February", "March", "April", "May",
+                             "June", "July", "August", "September", "October", "November", "December",
+                             "Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec",
+                             "Jan.", "Feb.", "Mar.", "Apr.", "May.", "Jun.", "Jul.", "Aug.", "Sep.", "Oct.", "Nov.", "Dec.",
+                             "First", "Second", "Third", "Fourth", "Fifth", "Sixth", "Seventh", "Eighth", "Ninth", "Tenth"] \
+            and original_ner=='O' \
+            and w_loc != 0: # Capitalized words inside sentence that classified as 'O'
+            masked_sentence = ' '.join([word if i != w_loc else '<mask>' for i, word in enumerate(sentence)])
+            tokenized_sentence = self.tokenizer(masked_sentence, return_tensors='pt')
+            mask_index = tokenized_sentence["input_ids"][0].tolist().index(self.tokenizer.mask_token_id)
+            with torch.no_grad():
+                logits = self.language_model(**tokenized_sentence).logits
+            filling_options = self._get_top_k_known_predictions(logits, mask_index, k=3)
+            possible_tags = [self._get_best_ner_tag(f, cur_pos, prev_pos, inc_prev) for f in filling_options]
+            self.test_counter += 1
+            if self.test_counter % 100 == 0:
+                print(self.test_counter)
+            chosen_tag = max(possible_tags, key=possible_tags.count)
+            self.capitalized_dict[word] = chosen_tag
+            return chosen_tag
+        elif ((word in ('of', 'in')) and (prev_ner in ('ORG', 'MISC', 'LOC'))):
+            return prev_ner
+        else:
+            return original_ner
+        
+    def _get_best_ner_tag(self, word, cur_pos, prev_pos, include_previous=True):
+        best_ner_tag = self.most_freq_tag_per.get(f'{word}_{cur_pos}',
+                                                     self.word_most_freq_tag.get(word,
+                                                                                 self.most_freq_tag_by_pos_w_prev.get(f'{prev_pos}_{cur_pos}',
+                                                                                                                      self.most_freq_tag_by_pos.get(cur_pos, 'O'))))
+        if include_previous:
+            best_ner_tag = self.most_freq_tag_per_with_prev.get(f'{word}_{cur_pos}_{prev_pos}', best_ner_tag)
+        return best_ner_tag
+
     def predict(self, test_data, include_previous_pos=False, inflect_missing=False):
         words_preds = []
         pos_model_input = self._extract_sentences(test_data, is_test=True)
         pos_tags = self.pretrained_pos_model.bigram_predict(pos_model_input)
         pos_i = 0
         for sentence in test_data:
+            prev_ner = ''
             for w_loc, word in enumerate(sentence):
                 if inflect_missing:
                     word = self._inflect_word_if_missing(word)
-
                 prev_pos = pos_tags[pos_i-1] if w_loc!=0 else ''
-                ner_tag = self.most_freq_tag_per.get(f'{word}_{pos_tags[pos_i]}', 
-                                                     self.word_most_freq_tag.get(word, 
-                                                                                 self.most_freq_tag_by_prev_pos.get(prev_pos, 'O')))
+                ner_tag = self.most_freq_tag_per.get(f'{word}_{pos_tags[pos_i]}',
+                                                     self.word_most_freq_tag.get(word,
+                                                                                 self.most_freq_tag_by_pos_w_prev.get(f'{prev_pos}_{pos_tags[pos_i]}',
+                                                                                                                      self.most_freq_tag_by_pos.get(pos_tags[pos_i], 'O'))))
+                ner_tag = self._rule_based_fixing(word, ner_tag, pos_tags[pos_i], prev_pos, sentence, w_loc, include_previous_pos, prev_ner)
                 if include_previous_pos:
                     ner_tag = self.most_freq_tag_per_with_prev.get(f'{word}_{pos_tags[pos_i]}_{prev_pos}', ner_tag)
-
+                
                 pos_i += 1
+                prev_ner = ner_tag
                 words_preds.append(ner_tag)
         return words_preds

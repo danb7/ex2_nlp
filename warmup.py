@@ -31,9 +31,10 @@ with torch.no_grad():
     logits = masked_language_model(**tokenized_text).logits
 
 def get_top_k_predictions(logits, word_index, k=5):
-    top_k_values, top_k_indices = torch.topk(logits[0, word_index, :], k)
-    top_k_probabilities = torch.nn.functional.softmax(top_k_values, dim=-1)
-    predicted_tokens = [tokenizer.decode(i) for i in top_k_indices]
+    probabilities = torch.nn.functional.softmax(logits[0, word_index, :], dim=-1)
+    sort_indices = torch.argsort(probabilities, descending =True)
+    top_k_probabilities = [prob.item() for prob in probabilities[sort_indices[:k]]]
+    predicted_tokens = [tokenizer.decode(i) for i in sort_indices[:k]]
     return {'predicted_tokens': predicted_tokens, 'probas': top_k_probabilities}
 
 print("am top-5 predictions and their probabilities:")
