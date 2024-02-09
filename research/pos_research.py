@@ -4,7 +4,13 @@ import gensim.downloader as dl
 from transformers import RobertaTokenizerFast, RobertaForMaskedLM
 import torch
 import time
-import utils
+
+import sys
+import os
+current_script_dir = os.path.dirname(os.path.abspath(__file__))
+parent_dir = os.path.abspath(os.path.join(current_script_dir, '..'))
+sys.path.append(parent_dir)
+import lib.utils as utils
 
 random.seed(42)
 
@@ -211,7 +217,6 @@ class Static_Vector_POS_Model(Bigram_POS_Model):
         
         return word_pos_pred     
     
-
 class Contextualized_Vector_POS_Model(Bigram_POS_Model):
     def fit(self, train_data, fill_model_name = 'roberta-base'):
         super().fit(train_data)

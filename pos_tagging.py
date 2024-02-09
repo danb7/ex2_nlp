@@ -1,5 +1,5 @@
-import models
-import utils
+import lib.models as models
+import lib.utils as utils
 
 train_file = './data/pos/ass1-tagger-train'
 test_input_file = './data/pos/ass1-tagger-test-input'

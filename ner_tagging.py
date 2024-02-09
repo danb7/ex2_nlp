@@ -1,8 +1,8 @@
 import subprocess
 
 from transformers import RobertaTokenizerFast, RobertaForMaskedLM
-import utils
-import models
+import lib.utils as utils
+import lib.models as models
 
 # files definitions
 train_file = r'data\ner\train'
@@ -32,11 +32,13 @@ ner_model = models.NER_Model_With_POS_Feats(pos_mdl, model_dict = model_params)
 ner_model.fit(normalized_train_data)
 
 # predicting on dev for performance evaluation
+print('Predicting dev set NER tags...')
 y_dev_pred = ner_model.predict(dev_sentences, include_previous_pos=True, inflect_missing=True)
 print('\nNER predictions evaluation on dev set:')
-ner_model.save_prediction_to_file(dev_sentences, y_dev_pred, r'ner_pred_on_dev_best_model.txt')
-subprocess.run(['python', 'ner_eval.py', r'data\ner\dev', r'ner_pred_on_dev_best_model.txt'], check=True)
+ner_model.save_prediction_to_file(dev_sentences, y_dev_pred, r'temp\ner_pred_on_dev_best_model.txt')
+subprocess.run(['python', 'ner_eval.py', r'data\ner\dev', r'temp\ner_pred_on_dev_best_model.txt'], check=True)
 
 # predicting on test and saving file
+print('Predicting test set NER tags...')
 y_test_pred = ner_model.predict(test_sentences, include_previous_pos=True, inflect_missing=True)
 ner_model.save_prediction_to_file(test_sentences, y_test_pred, r'test_predictions\NER_preds.txt')

@@ -4,8 +4,14 @@ from matplotlib import pyplot as plt
 
 from sklearn import decomposition
 from transformers import RobertaTokenizer, RobertaTokenizerFast, RobertaForMaskedLM
-import utils
-import models
+
+import sys
+import os
+current_script_dir = os.path.dirname(os.path.abspath(__file__))
+parent_dir = os.path.abspath(os.path.join(current_script_dir, '..'))
+sys.path.append(parent_dir)
+import lib.utils as utils
+import lib.models as models
 
 
 train_file = r'data\ner\train'
@@ -53,11 +59,11 @@ ner_model.fit(normalized_train_data)
 y_dev_pred = ner_model.predict(dev_sentences, include_previous_pos=False, inflect_missing=True)
 y_dev_pred_with_prev = ner_model.predict(dev_sentences, include_previous_pos=True, inflect_missing=True)
 print('\nNER predictions with POS features')
-ner_model.save_prediction_to_file(dev_sentences, y_dev_pred, r'ner_pred_on_dev_base_model.txt')
-subprocess.run(['python', 'ner_eval.py', r'data\ner\dev', r'ner_pred_on_dev_base_model.txt'], check=True)
+ner_model.save_prediction_to_file(dev_sentences, y_dev_pred, r'temp\ner_pred_on_dev_base_model.txt')
+subprocess.run(['python', 'ner_eval.py', r'data\ner\dev', r'temp\ner_pred_on_dev_base_model.txt'], check=True)
 print('\nNER predictions with POS features including previous')
-ner_model.save_prediction_to_file(dev_sentences, y_dev_pred_with_prev, r'ner_pred_on_dev_base_model.txt')
-subprocess.run(['python', 'ner_eval.py', r'data\ner\dev', r'ner_pred_on_dev_base_model.txt'], check=True)
+ner_model.save_prediction_to_file(dev_sentences, y_dev_pred_with_prev, r'temp\ner_pred_on_dev_base_model.txt')
+subprocess.run(['python', 'ner_eval.py', r'data\ner\dev', r'temp\ner_pred_on_dev_base_model.txt'], check=True)
 
 ##############################extend dictionary##############################
 # model_name = 'roberta-base'
