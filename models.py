@@ -640,7 +640,10 @@ class NER_Model_With_POS_Feats(Base_NER_Model):
     def _repassing_uncertain_entities(self, entity):
         tags = [tag for word, tag in entity]
         if (len(entity) > 1) and (len(set(tags))) > 1:
-            mode_tag = max(set(tags), key=tags.count)
+            if tags[-1] != 'PER':
+                tags = tags[::-1]
+            # mode_tag = max(set(tags), key=tags.count)
+            mode_tag = max((tags), key=tags.count)
             entity = [(word, mode_tag) for word, tag in entity]
         return entity
 
